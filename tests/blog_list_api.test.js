@@ -71,7 +71,6 @@ test('likes property defaults to 0 if missing', async () => {
   expect(lastBlogAdded.likes).toBe(0)
 })
 
-/*
 test('return 400 Bad Request if author and url are missing from post request', async () => {
   const newBlog = {
     title: 'jest testing title 1',
@@ -81,9 +80,8 @@ test('return 400 Bad Request if author and url are missing from post request', a
   await api
     .post('/api/blogs')
     .send(newBlog)
-    .expect(0)
-}
-*/
+    .expect(400)
+})
 
 afterAll(() => {
   mongoose.connection.close()
