@@ -52,6 +52,23 @@ test('a valid blog can be added', async () => {
   )
 })
 
+test('likes property defaults to 0 if missing', async () => {
+  const newBlog = {
+    title: 'jest testing title 1',
+    author: 'jest test author 1',
+    url: 'www.jestfakeaddress1.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect()
+
+  const response = await api.get('/api/blogs')
+  const lastBlogAdded = response[response.length - 1]
+  expect(lastBlogAdded.likes).toBe(0)
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })
