@@ -5,6 +5,7 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -126,6 +127,91 @@ describe('when there is initially some blogs saved', () => {
       expect(blogAfterUpdate.likes).toBe(newLikes)
       expect(blogAfterUpdate.likes).not.toBe(blogBeforeUpdate.likes)
     })
+  })
+})
+
+describe('when there are no users in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+  })
+
+  test('creating a user with no username property returns validation error', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      name: 'Enrique Cardenas',
+      password: 'fakepassword1',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    expect(result.body.error).toContain('`username` is required')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creating a user with a short username fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: '12',
+      name: 'Enrique Cardenas',
+      password: 'fakepassword1',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+
+    expect(result.body.error).toContain('shorter than the minimum allowed')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creating a user with no password property fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'enriquecardenas',
+      name: 'Enrique Cardenas'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    expect(result.body.error).toContain('password missing')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
+  })
+
+  test('creating a user with a short password fails', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'enriquecardenas',
+      name: 'Enrique Cardenas',
+      password: '12'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    expect(result.body.error).toContain('password is too short')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd.length).toBe(usersAtStart.length)
   })
 })
 

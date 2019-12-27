@@ -9,7 +9,7 @@ usersRouter.post('/', async (request, response, next) => {
     if(!body.password)
       return response.status(400).send({ error: 'password missing' })
     else if(body.password.length < 3)
-      return response.status(400).send({ error: 'password is too short, must be at least 3' })
+      return response.status(400).send({ error: 'password is too short' })
 
     const saltRounds = 10
     const passwordHash = await bcrypt.hash(body.password, saltRounds)
