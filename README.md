@@ -10,4 +10,5 @@ To allow for the "build:ui" script to work, make sure the frontend repo folder a
 npm run build:ui
 ```
 
-[Link](https://arcane-tundra-01783.herokuapp.com/) to live demo hosted on Heroku.
+A live demo hosted with Heroku can be found [here](https://arcane-tundra-01783.herokuapp.com/)
+
